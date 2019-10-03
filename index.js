@@ -1,20 +1,24 @@
 
 let tokens = [
   {
-    name: "WORD",
+    name: "IDENTIFIER",
     expr: "LETTER+"
   },
   {
-    name: "LETTER",
-    expr: "[a-zA-Z]"
+    name: "INTEGER",
+    expr: "DIGIT+"
   },
   {
-    name: "NUM",
-    expr: "DIGIT+"
+    name: "FLOAT",
+    expr: "INTEGER\\.(INTEGER)?"
   },
   {
     name: "DIGIT",
     expr: "[0-9]"
+  },
+  {
+    name: "LETTER",
+    expr: "[a-zA-Z]"
   },
   {
     name: "WHITE",
@@ -29,19 +33,21 @@ for (let i = 0; i < tokens.length; ++i) {
     if (i == j) continue;
     let token2 = tokens[j];
 
-    token1.expr = token1.expr.replace(token2.name, token2.expr);
+    while (token1.expr.includes(token2.name)) token1.expr = token1.expr.replace(token2.name, token2.expr);
   }
 }
 
 tokens = tokens.map(token => {
-  token.expr = '^' + token.expr + '$';
+  if (!token.expr.includes('^')) token.expr = '^' + token.expr;
+  if (!token.expr.includes('$')) token.expr = token.expr + '$';
   return token;
 });
 
-function lex(string) {
+function lex(tokens, string) {
   let tokenized = [];
   let expr = "";
   let last_token = null;
+
   for (let i = 0; i < string.length; ++i) {
     expr += string[i];
 
@@ -55,7 +61,10 @@ function lex(string) {
     }
 
     if (!cur_token) {
-      tokenized.push(last_token.name);
+      tokenized.push({
+        token: expr.slice(0, expr.length - 1),
+        type: last_token ? last_token.name : last_token
+      });
       expr = "";
       if (!last_token) continue;
       i -= 1;
@@ -63,9 +72,12 @@ function lex(string) {
     last_token = cur_token;
   }
 
-  tokenized.push(last_token.name);
+  tokenized.push({
+    token: expr.slice(0, expr.length),
+    type: last_token ? last_token.name : last_token
+  });
 
   return tokenized;
 }
 
-console.log(lex("1234 abc"))
+console.log(lex(tokens, "123 123.4 abc"));

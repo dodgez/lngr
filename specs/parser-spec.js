@@ -26,7 +26,7 @@ describe('Parser', () => {
   });
 
   describe('sample', () => {
-    it('formats one rule', () => {
+    it('parses one rule', () => {
       let tokens = [
         {token: '+', type: 'BINARY_OP'},
         {token: '1', type: 'INTEGER'},
@@ -38,7 +38,7 @@ describe('Parser', () => {
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
     });
 
-    it('formats dependent rules', () => {
+    it('parses dependent rules', () => {
       let tokens = [
         {token: '=', type: 'ASSIGNMENT'},
         {token: 'a', type: 'IDENTIFIER'},

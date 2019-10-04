@@ -36,6 +36,8 @@ class TokenStream {
   }
 
   peekToken() {
+    if (this.isEOF()) return false;
+
     return this.tokens[this.index].token;
   }
 

@@ -10,7 +10,7 @@
     },
     {
       "name": "FLOAT",
-      "expr": "INTEGER\\.(INTEGER)?"
+      "expr": "INTEGER\\.(?:INTEGER)?"
     },
     {
       "name": "DIGIT",
@@ -22,7 +22,7 @@
     },
     {
       "name": "WHITESPACE",
-      "expr": "( |\t|\r|\n)+"
+      "expr": "(?: |\t|\r|\n)+",
     }
   ]
 }

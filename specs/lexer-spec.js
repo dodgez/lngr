@@ -58,6 +58,12 @@ describe('Lexer', () => {
       tokens = lexer.formatTokens(grammar.tokens);
     });
 
+    it('lexes a character', () => {
+      expect(lexer.lex(tokens, utils.getStringStream('a'))).to.deep.equal(
+        [{token: 'a', type: 'IDENTIFIER'}]
+      );
+    });
+
     it('lexes integers', () => {
       expect(lexer.lex(tokens, utils.getStringStream('123'))).to.deep.equal(
         [{token: '123', type: 'INTEGER'}]
@@ -85,11 +91,32 @@ describe('Lexer', () => {
       expect(lexer.lex(tokens, utils.getStringStream('12.3 123 abc'))).to.deep.equal(
         [
           {token: '12.3', type: 'FLOAT'},
-          {token: ' ', type: 'WHITESPACE'},
           {token: '123', type: 'INTEGER'},
-          {token: ' ', type: 'WHITESPACE'},
           {token: 'abc', type: 'IDENTIFIER'},
         ]
+      );
+    });
+
+    it('lexes a single character ending token', () => {
+      expect(lexer.lex(tokens, utils.getStringStream(' 2'))).to.deep.equal(
+        [
+          {token: '2', type: 'INTEGER'}
+        ]
+      );
+    });
+
+    it('lexes a single character ending token after an unknown', () => {
+      expect(lexer.lex(tokens, utils.getStringStream('|2'))).to.deep.equal(
+        [
+          {token: '|', type: null},
+          {token: '2', type: 'INTEGER'}
+        ]
+      );
+    });
+
+    it('lexes an unknown starting character', () => {
+      expect(lexer.lex(tokens, utils.getStringStream('|'))).to.deep.equal(
+        [{token: '|', type: null}]
       );
     });
   });

@@ -23,6 +23,7 @@
     {
       "name": "WHITESPACE",
       "expr": "(?: |\t|\r|\n)+",
+      "ignore": true
     }
   ]
 }

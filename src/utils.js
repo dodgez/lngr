@@ -7,8 +7,12 @@ class StringStream {
     this.index = 0;
   }
 
-  get() {
-    return (this.index < this.string.length ? this.string[this.index++] : null);
+  peek() {
+    return (this.index < this.string.length ? this.string[this.index] : null);
+  }
+
+  advance() {
+    this.index++;
   }
 
   isEOF() {

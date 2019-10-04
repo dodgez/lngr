@@ -1,10 +1,13 @@
-module.exports.lex = function(tokens, string) {
+module.exports.lex = function(tokens, stream) {
   let tokenized = [];
   let expr = "";
   let last_token = null;
+  let char = null;
 
-  for (let i = 0; i < string.length; ++i) {
-    expr += string[i];
+  while (!stream.isEOF()) {
+    if (!char) char = stream.get();
+    expr += char;
+    char = null;
 
     let cur_token = null;
 
@@ -16,19 +19,23 @@ module.exports.lex = function(tokens, string) {
     }
 
     if (!cur_token) {
+      if (last_token) {
+        char = expr[expr.length - 1];
+        expr = expr.slice(0, expr.length - 1);
+      }
+
       tokenized.push({
-        token: expr.slice(0, expr.length - 1),
+        token: expr,
         type: last_token ? last_token.name : last_token
       });
       expr = "";
-      if (!last_token) continue;
-      i -= 1;
     }
+
     last_token = cur_token;
   }
 
   tokenized.push({
-    token: expr.slice(0, expr.length),
+    token: last_token ? expr : char,
     type: last_token ? last_token.name : last_token
   });
 

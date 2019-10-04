@@ -9,7 +9,11 @@ module.exports.formatRules = function(raw_rules) {
     rule.parse = function(stream) {
       let children = []
       for (let expr of rule.expr.split(' ')) {
+        let optional = expr.endsWith('?');
+        let paranthesized = expr.includes('(') || expr.includes(')');
         let option_passed = false;
+
+        if (optional || paranthesized) expr = expr.replace(/(\(|\)|\?)/g, '');
 
         for (let option of expr.split('|')) {
           let is_token = option.match(/^[A-Z]/) ? true : false;
@@ -32,7 +36,7 @@ module.exports.formatRules = function(raw_rules) {
           }
         }
 
-        if (!option_passed) return null;
+        if (!option_passed && !optional) return null;
       }
 
       return new utils.ASTNode(rule.name, children);

@@ -124,5 +124,21 @@ describe('Parser', () => {
 
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
     });
+
+    it('parses rules with optional arguments', () => {
+      let tokens = [
+        {token: '+', type: 'OPERATOR'},
+        {token: 'a', type: 'IDENTIFIER'}
+      ];
+      let node = new utils.ASTNode('expression', [
+        new utils.ASTNode('OPERATOR', null, '+'),
+        new utils.ASTNode('IDENTIFIER', null, 'a')
+      ]);
+      let rules = parser.formatRules([
+        {name: 'expression', expr: 'OPERATOR INTEGER|IDENTIFIER (INTEGER|IDENTIFIER)?'}
+      ]);
+
+      expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
+    });
   });
 });

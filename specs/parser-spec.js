@@ -16,7 +16,7 @@ describe('Parser', () => {
     it('formats dependent rules', () => {
       let rules = parser.formatRules([
         {name: 'statement', expr: 'ASSIGNMENT IDENTIFIER expression'},
-        {name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'},
+        {name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'}
       ]);
 
       expect(rules[0]).to.have.property('name', 'statement');
@@ -45,15 +45,15 @@ describe('Parser', () => {
         {token: '+', type: 'BINARY_OP'},
         {token: '1', type: 'INTEGER'},
         {token: '1', type: 'INTEGER'}
-      ]
+      ];
       let node = new utils.ASTNode('statement', [
         new utils.ASTNode('ASSIGNMENT', null, '='),
         new utils.ASTNode('IDENTIFIER', null, 'a'),
         new utils.ASTNode('expression', [
           new utils.ASTNode('BINARY_OP', null, '+'),
           new utils.ASTNode('INTEGER', null, '1'),
-          new utils.ASTNode('INTEGER', null, '1'),
-        ]),
+          new utils.ASTNode('INTEGER', null, '1')
+        ])
       ]);
       let rules = parser.formatRules([
         {name: 'statement', expr: 'ASSIGNMENT IDENTIFIER expression'},

@@ -6,13 +6,6 @@ let utils = require('./../src/utils');
 
 describe('Lexer', () => {
   describe('formats', () => {
-    let tokens;
-
-    before(() => {
-      let grammar = JSON.parse(fs.readFileSync('./sample_grammar.json', 'utf8'));
-      tokens = lexer.formatTokens(grammar.tokens);
-    });
-
     it('formats one token', () => {
       expect(lexer.formatTokens([{name: 'INTEGER', expr: '[0-9]+'}])).to.deep.equal(
         [{name: 'INTEGER', expr: '^[0-9]+$'}]

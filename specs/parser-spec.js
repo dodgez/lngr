@@ -119,7 +119,7 @@ describe('Parser', () => {
       ]);
       let rules = parser.formatRules([
         {name: 'statement', expr: 'ASSIGNMENT IDENTIFIER expression'},
-        {name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'},
+        {name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'}
       ]);
 
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);

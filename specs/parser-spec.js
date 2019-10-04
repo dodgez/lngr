@@ -38,6 +38,68 @@ describe('Parser', () => {
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
     });
 
+    it('parses an OR rule', () => {
+      let tokens = [
+        {token: '+', type: 'BINARY_OP'},
+        {token: 'a', type: 'IDENTIFIER'},
+        {token: '1', type: 'INTEGER'}
+      ];
+      let node = new utils.ASTNode('expression', tokens.map(token => new utils.ASTNode(token.type, null, token.token)));
+      let rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER|IDENTIFIER INTEGER'}]);
+
+      expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
+    });
+
+    it('parses a recursive rule', () => {
+      let tokens = [
+        {token: '+', type: 'BINARY_OP'},
+        {token: '+', type: 'BINARY_OP'},
+        {token: '1', type: 'INTEGER'},
+        {token: '1', type: 'INTEGER'},
+        {token: 'a', type: 'IDENTIFIER'}
+      ];
+      let node = new utils.ASTNode('expression', [
+        new utils.ASTNode('BINARY_OP', null, '+'),
+        new utils.ASTNode('expression', [
+          new utils.ASTNode('BINARY_OP', null, '+'),
+          new utils.ASTNode('INTEGER', null, '1'),
+          new utils.ASTNode('INTEGER', null, '1')
+        ]),
+        new utils.ASTNode('IDENTIFIER', null, 'a')
+      ]);
+      let rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER|IDENTIFIER|expression INTEGER|IDENTIFIER|expression'}]);
+
+      expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
+    });
+
+    it('parses a deeper recursive rule', () => {
+      let tokens = [
+        {token: '+', type: 'BINARY_OP'},
+        {token: '+', type: 'BINARY_OP'},
+        {token: '1', type: 'INTEGER'},
+        {token: 'a', type: 'IDENTIFIER'},
+        {token: '+', type: 'BINARY_OP'},
+        {token: 'a', type: 'IDENTIFIER'},
+        {token: '1', type: 'INTEGER'}
+      ];
+      let node = new utils.ASTNode('expression', [
+        new utils.ASTNode('BINARY_OP', null, '+'),
+        new utils.ASTNode('expression', [
+          new utils.ASTNode('BINARY_OP', null, '+'),
+          new utils.ASTNode('INTEGER', null, '1'),
+          new utils.ASTNode('IDENTIFIER', null, 'a')
+        ]),
+        new utils.ASTNode('expression', [
+          new utils.ASTNode('BINARY_OP', null, '+'),
+          new utils.ASTNode('IDENTIFIER', null, 'a'),
+          new utils.ASTNode('INTEGER', null, '1')
+        ])
+      ]);
+      let rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER|IDENTIFIER|expression INTEGER|IDENTIFIER|expression'}]);
+
+      expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
+    });
+
     it('parses dependent rules', () => {
       let tokens = [
         {token: '=', type: 'ASSIGNMENT'},

@@ -6,7 +6,7 @@
     },
     {
       "name": "expression",
-      "expr": "BINARY_OP INTEGER INTEGER | BINARY_OP IDENTIFIER INTEGER | BINARY_OP IDENTIFIER IDENTIFIER | BINARY_OP INTEGER IDENTIFIER"
+      "expr": "BINARY_OP INTEGER|IDENTIFIER|expression INTEGER|IDENTIFIER|expression"
     }
   ],
   "tokens": [

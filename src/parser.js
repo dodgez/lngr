@@ -7,38 +7,35 @@ module.exports.formatRules = function(raw_rules) {
 
   rules = rules.map(rule => {
     rule.parse = function(stream) {
-      let exprs = rule.expr.split(' ');
-      let children = [];
-      let passed = true;
+      let children = []
+      for (let expr of rule.expr.split(' ')) {
+        let option_passed = false;
 
-      for (let expr of exprs) {
-        let is_token = expr.match(/^[A-Z]/) ? true : false;
-        
-        if (is_token) {
-          if (stream.matchesToken(expr)) {
-            children.push(new utils.ASTNode(expr, null, stream.peekToken()));
-            stream.advance()
-          } else {
-            passed = false;
-            break;
-          }
-        } else {
-          let node = rules.filter(rule => rule.name == expr)[0].parse(stream);
+        for (let option of expr.split('|')) {
+          let is_token = option.match(/^[A-Z]/) ? true : false;
 
-          if (node) {
-            children.push(node);
+          if (is_token) {
+            if (stream.matchesToken(option)) {
+              children.push(new utils.ASTNode(option, null, stream.peekToken()));
+              stream.advance();
+              option_passed = true;
+              break;
+            }
           } else {
-            passed = false;
-            break;
+            let node = rules.filter(rule => rule.name == option)[0].parse(stream);
+
+            if (node) {
+              children.push(node);
+              option_passed = true;
+              break;
+            }
           }
         }
+
+        if (!option_passed) return null;
       }
 
-      if (passed) {
-        return new utils.ASTNode(rule.name, children);
-      } else {
-        return null;
-      }
+      return new utils.ASTNode(rule.name, children);
     }
 
     return rule;

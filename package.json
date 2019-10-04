@@ -4,7 +4,7 @@
   "description": "A lexing and parsing library",
   "main": "index.js",
   "scripts": {
-    "test": "mocha specs/**/*-spec.js"
+    "test": "mocha ./specs/**/*-spec.js"
   },
   "keywords": [],
   "author": "Zachary Dodge",

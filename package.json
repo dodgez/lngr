@@ -10,6 +10,7 @@
   "keywords": [],
   "author": "Zachary Dodge",
   "license": "MIT",
+  "repository": "https://github.com/dodgez/lngr",
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^6.2.1"

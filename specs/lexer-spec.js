@@ -9,7 +9,7 @@ describe('Lexer', () => {
     it('formats one token', () => {
       expect(lexer.formatTokens([{name: 'INTEGER', expr: '[0-9]+'}])).to.deep.equal(
         [{name: 'INTEGER', expr: '^[0-9]+$'}]
-      )
+      );
     });
 
     it('formats independent tokens', () => {
@@ -19,7 +19,7 @@ describe('Lexer', () => {
       ])).to.deep.equal([
         {name: 'INTEGER', expr: '^[0-9]+$'},
         {name: 'WHITESPACE', expr: '^( |\t|\r|\n)+$'}
-      ])
+      ]);
     });
 
     it('formats two simple dependent tokens', () => {
@@ -29,7 +29,7 @@ describe('Lexer', () => {
       ])).to.deep.equal([
         {name: 'INTEGER', expr: '^[0-9]+$'},
         {name: 'INTEGER2', expr: '^[0-9]+\\.$'}
-      ])
+      ]);
     });
 
     it('formats two dependent tokens', () => {
@@ -39,7 +39,7 @@ describe('Lexer', () => {
       ])).to.deep.equal([
         {name: 'INTEGER', expr: '^[0-9]+$'},
         {name: 'FLOAT', expr: '^[0-9]+\\.([0-9]+)?$'}
-      ])
+      ]);
     });
   });
 

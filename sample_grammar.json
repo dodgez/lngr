@@ -1,5 +1,23 @@
 {
+  "rules": [
+    {
+      "name": "assignment",
+      "expr": "ASSIGNMENT expression expression"
+    },
+    {
+      "name": "expression",
+      "expr": "BINARY_OP INTEGER INTEGER | BINARY_OP IDENTIFIER INTEGER | BINARY_OP IDENTIFIER IDENTIFIER | BINARY_OP INTEGER IDENTIFIER"
+    }
+  ],
   "tokens": [
+    {
+      "name": "ASSIGNMENT",
+      "expr": "="
+    },
+    {
+      "name": "BINARY_OP",
+      "expr": "(?:\\+|\\-|\\*|\\/)+"
+    },
     {
       "name": "IDENTIFIER",
       "expr": "LETTER+"

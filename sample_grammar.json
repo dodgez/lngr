@@ -1,0 +1,28 @@
+{
+  "tokens": [
+    {
+      "name": "IDENTIFIER",
+      "expr": "LETTER+"
+    },
+    {
+      "name": "INTEGER",
+      "expr": "DIGIT+"
+    },
+    {
+      "name": "FLOAT",
+      "expr": "INTEGER\\.(INTEGER)?"
+    },
+    {
+      "name": "DIGIT",
+      "expr": "[0-9]"
+    },
+    {
+      "name": "LETTER",
+      "expr": "[a-zA-Z]"
+    },
+    {
+      "name": "WHITE",
+      "expr": "( |\t|\r|\n)+"
+    }
+  ]
+}

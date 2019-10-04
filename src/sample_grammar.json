@@ -21,7 +21,7 @@
       "expr": "[a-zA-Z]"
     },
     {
-      "name": "WHITE",
+      "name": "WHITESPACE",
       "expr": "( |\t|\r|\n)+"
     }
   ]

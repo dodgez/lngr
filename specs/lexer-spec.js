@@ -9,7 +9,7 @@ describe('Lexer', () => {
     let tokens;
 
     before(() => {
-      let grammar = JSON.parse(fs.readFileSync('./src/sample_grammar.json', 'utf8'));
+      let grammar = JSON.parse(fs.readFileSync('./sample_grammar.json', 'utf8'));
       tokens = lexer.formatTokens(grammar.tokens);
     });
 
@@ -54,7 +54,7 @@ describe('Lexer', () => {
     let tokens;
 
     before(() => {
-      let grammar = JSON.parse(fs.readFileSync('./src/sample_grammar.json', 'utf8'));
+      let grammar = JSON.parse(fs.readFileSync('./sample_grammar.json', 'utf8'));
       tokens = lexer.formatTokens(grammar.tokens);
     });
 

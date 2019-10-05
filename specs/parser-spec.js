@@ -139,6 +139,93 @@ describe('Parser', () => {
       ]);
 
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
+
+      tokens = [
+        {token: '+', type: 'OPERATOR'},
+        {token: 'a', type: 'IDENTIFIER'},
+        {token: 'a', type: 'IDENTIFIER'}
+      ];
+      node = new utils.ASTNode('expression', [
+        new utils.ASTNode('OPERATOR', null, '+'),
+        new utils.ASTNode('IDENTIFIER', null, 'a'),
+        new utils.ASTNode('IDENTIFIER', null, 'a')
+      ]);
+
+      expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
+    });
+
+    it('parses rules with one-or-more type arguments', () => {
+      let tokens = [
+        {token: 'print', type: 'PRINT'}
+      ];
+      let node = null;
+      let rules = parser.formatRules([
+        {name: 'print', expr: 'PRINT (INTEGER|IDENTIFIER)+'}
+      ]);
+
+      expect(rules[0].parse(utils.getTokenStream(tokens))).to.equal(node);
+
+      tokens = [
+        {token: 'print', type: 'PRINT'},
+        {token: '1', type: 'INTEGER'}
+      ];
+      node = new utils.ASTNode('print', [
+        new utils.ASTNode('PRINT', null, 'print'),
+        new utils.ASTNode('INTEGER', null, '1')
+      ]);
+
+      expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
+
+      tokens = [
+        {token: 'print', type: 'PRINT'},
+        {token: '1', type: 'INTEGER'},
+        {token: 'a', type: 'IDENTIFIER'}
+      ];
+      node = new utils.ASTNode('print', [
+        new utils.ASTNode('PRINT', null, 'print'),
+        new utils.ASTNode('INTEGER', null, '1'),
+        new utils.ASTNode('IDENTIFIER', null, 'a')
+      ]);
+
+      expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
+    });
+
+    it('parses rules with zero-or-more type arguments', () => {
+      let tokens = [
+        {token: 'print', type: 'PRINT'}
+      ];
+      let node = new utils.ASTNode('print', [
+        new utils.ASTNode('PRINT', null, 'print')
+      ]);
+      let rules = parser.formatRules([
+        {name: 'print', expr: 'PRINT INTEGER*'}
+      ]);
+
+      expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
+
+      tokens = [
+        {token: 'print', type: 'PRINT'},
+        {token: '1', type: 'INTEGER'}
+      ];
+      node = new utils.ASTNode('print', [
+        new utils.ASTNode('PRINT', null, 'print'),
+        new utils.ASTNode('INTEGER', null, '1')
+      ]);
+
+      expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
+
+      tokens = [
+        {token: 'print', type: 'PRINT'},
+        {token: '1', type: 'INTEGER'},
+        {token: '1', type: 'INTEGER'}
+      ];
+      node = new utils.ASTNode('print', [
+        new utils.ASTNode('PRINT', null, 'print'),
+        new utils.ASTNode('INTEGER', null, '1'),
+        new utils.ASTNode('INTEGER', null, '1')
+      ]);
+
+      expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
     });
   });
 });

@@ -198,7 +198,7 @@ describe('Parser', () => {
         new utils.ASTNode('PRINT', null, 'print')
       ]);
       let rules = parser.formatRules([
-        {name: 'print', expr: 'PRINT INTEGER*'}
+        {name: 'print', expr: 'PRINT (INTEGER|IDENTIFIER)*'}
       ]);
 
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
@@ -217,12 +217,12 @@ describe('Parser', () => {
       tokens = [
         {token: 'print', type: 'PRINT'},
         {token: '1', type: 'INTEGER'},
-        {token: '1', type: 'INTEGER'}
+        {token: 'a', type: 'IDENTIFIER'}
       ];
       node = new utils.ASTNode('print', [
         new utils.ASTNode('PRINT', null, 'print'),
         new utils.ASTNode('INTEGER', null, '1'),
-        new utils.ASTNode('INTEGER', null, '1')
+        new utils.ASTNode('IDENTIFIER', null, 'a')
       ]);
 
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);

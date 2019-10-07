@@ -32,7 +32,7 @@ describe('Parser', function() {
         {token: '1', type: 'INTEGER'},
         {token: '1', type: 'INTEGER'},
       ]
-      let node = new utils.ASTNode('expression', tokens.map(token => new utils.ASTNode(token.type, null, token.token)));
+      let node = new utils.ASTNode('expression', tokens.map(token => new utils.ASTNode(token.type, [], token.token)));
       let rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'}]);
 
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
@@ -44,7 +44,7 @@ describe('Parser', function() {
         {token: 'a', type: 'IDENTIFIER'},
         {token: '1', type: 'INTEGER'}
       ];
-      let node = new utils.ASTNode('expression', tokens.map(token => new utils.ASTNode(token.type, null, token.token)));
+      let node = new utils.ASTNode('expression', tokens.map(token => new utils.ASTNode(token.type, [], token.token)));
       let rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER|IDENTIFIER INTEGER'}]);
 
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
@@ -59,13 +59,13 @@ describe('Parser', function() {
         {token: 'a', type: 'IDENTIFIER'}
       ];
       let node = new utils.ASTNode('expression', [
-        new utils.ASTNode('BINARY_OP', null, '+'),
+        new utils.ASTNode('BINARY_OP', [], '+'),
         new utils.ASTNode('expression', [
-          new utils.ASTNode('BINARY_OP', null, '+'),
-          new utils.ASTNode('INTEGER', null, '1'),
-          new utils.ASTNode('INTEGER', null, '1')
+          new utils.ASTNode('BINARY_OP', [], '+'),
+          new utils.ASTNode('INTEGER', [], '1'),
+          new utils.ASTNode('INTEGER', [], '1')
         ]),
-        new utils.ASTNode('IDENTIFIER', null, 'a')
+        new utils.ASTNode('IDENTIFIER', [], 'a')
       ]);
       let rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER|IDENTIFIER|expression INTEGER|IDENTIFIER|expression'}]);
 
@@ -83,16 +83,16 @@ describe('Parser', function() {
         {token: '1', type: 'INTEGER'}
       ];
       let node = new utils.ASTNode('expression', [
-        new utils.ASTNode('BINARY_OP', null, '+'),
+        new utils.ASTNode('BINARY_OP', [], '+'),
         new utils.ASTNode('expression', [
-          new utils.ASTNode('BINARY_OP', null, '+'),
-          new utils.ASTNode('INTEGER', null, '1'),
-          new utils.ASTNode('IDENTIFIER', null, 'a')
+          new utils.ASTNode('BINARY_OP', [], '+'),
+          new utils.ASTNode('INTEGER', [], '1'),
+          new utils.ASTNode('IDENTIFIER', [], 'a')
         ]),
         new utils.ASTNode('expression', [
-          new utils.ASTNode('BINARY_OP', null, '+'),
-          new utils.ASTNode('IDENTIFIER', null, 'a'),
-          new utils.ASTNode('INTEGER', null, '1')
+          new utils.ASTNode('BINARY_OP', [], '+'),
+          new utils.ASTNode('IDENTIFIER', [], 'a'),
+          new utils.ASTNode('INTEGER', [], '1')
         ])
       ]);
       let rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER|IDENTIFIER|expression INTEGER|IDENTIFIER|expression'}]);
@@ -109,12 +109,12 @@ describe('Parser', function() {
         {token: '1', type: 'INTEGER'}
       ];
       let node = new utils.ASTNode('statement', [
-        new utils.ASTNode('ASSIGNMENT', null, '='),
-        new utils.ASTNode('IDENTIFIER', null, 'a'),
+        new utils.ASTNode('ASSIGNMENT', [], '='),
+        new utils.ASTNode('IDENTIFIER', [], 'a'),
         new utils.ASTNode('expression', [
-          new utils.ASTNode('BINARY_OP', null, '+'),
-          new utils.ASTNode('INTEGER', null, '1'),
-          new utils.ASTNode('INTEGER', null, '1')
+          new utils.ASTNode('BINARY_OP', [], '+'),
+          new utils.ASTNode('INTEGER', [], '1'),
+          new utils.ASTNode('INTEGER', [], '1')
         ])
       ]);
       let rules = parser.formatRules([
@@ -131,8 +131,8 @@ describe('Parser', function() {
         {token: 'a', type: 'IDENTIFIER'}
       ];
       let node = new utils.ASTNode('expression', [
-        new utils.ASTNode('OPERATOR', null, '+'),
-        new utils.ASTNode('IDENTIFIER', null, 'a')
+        new utils.ASTNode('OPERATOR', [], '+'),
+        new utils.ASTNode('IDENTIFIER', [], 'a')
       ]);
       let rules = parser.formatRules([
         {name: 'expression', expr: 'OPERATOR INTEGER|IDENTIFIER (INTEGER|IDENTIFIER)?'}
@@ -146,9 +146,9 @@ describe('Parser', function() {
         {token: 'a', type: 'IDENTIFIER'}
       ];
       node = new utils.ASTNode('expression', [
-        new utils.ASTNode('OPERATOR', null, '+'),
-        new utils.ASTNode('IDENTIFIER', null, 'a'),
-        new utils.ASTNode('IDENTIFIER', null, 'a')
+        new utils.ASTNode('OPERATOR', [], '+'),
+        new utils.ASTNode('IDENTIFIER', [], 'a'),
+        new utils.ASTNode('IDENTIFIER', [], 'a')
       ]);
 
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
@@ -170,8 +170,8 @@ describe('Parser', function() {
         {token: '1', type: 'INTEGER'}
       ];
       node = new utils.ASTNode('print', [
-        new utils.ASTNode('PRINT', null, 'print'),
-        new utils.ASTNode('INTEGER', null, '1')
+        new utils.ASTNode('PRINT', [], 'print'),
+        new utils.ASTNode('INTEGER', [], '1')
       ]);
 
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
@@ -182,9 +182,9 @@ describe('Parser', function() {
         {token: 'a', type: 'IDENTIFIER'}
       ];
       node = new utils.ASTNode('print', [
-        new utils.ASTNode('PRINT', null, 'print'),
-        new utils.ASTNode('INTEGER', null, '1'),
-        new utils.ASTNode('IDENTIFIER', null, 'a')
+        new utils.ASTNode('PRINT', [], 'print'),
+        new utils.ASTNode('INTEGER', [], '1'),
+        new utils.ASTNode('IDENTIFIER', [], 'a')
       ]);
 
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
@@ -192,37 +192,43 @@ describe('Parser', function() {
 
     it('parses rules with zero-or-more type arguments', function() {
       let tokens = [
-        {token: 'print', type: 'PRINT'}
+        {token: '(', type: 'LPAREN'},
+        {token: ')', type: 'RPAREN'}
       ];
-      let node = new utils.ASTNode('print', [
-        new utils.ASTNode('PRINT', null, 'print')
+      let node = new utils.ASTNode('call', [
+        new utils.ASTNode('LPAREN', [], '('),
+        new utils.ASTNode('RPAREN', [], ')')
       ]);
       let rules = parser.formatRules([
-        {name: 'print', expr: 'PRINT (INTEGER|IDENTIFIER)*'}
+        {name: 'call', expr: 'LPAREN (INTEGER)* RPAREN'}
       ]);
 
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
 
       tokens = [
-        {token: 'print', type: 'PRINT'},
-        {token: '1', type: 'INTEGER'}
-      ];
-      node = new utils.ASTNode('print', [
-        new utils.ASTNode('PRINT', null, 'print'),
-        new utils.ASTNode('INTEGER', null, '1')
-      ]);
-
-      expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
-
-      tokens = [
-        {token: 'print', type: 'PRINT'},
+        {token: '(', type: 'LPAREN'},
         {token: '1', type: 'INTEGER'},
-        {token: 'a', type: 'IDENTIFIER'}
+        {token: ')', type: 'RPAREN'}
       ];
-      node = new utils.ASTNode('print', [
-        new utils.ASTNode('PRINT', null, 'print'),
-        new utils.ASTNode('INTEGER', null, '1'),
-        new utils.ASTNode('IDENTIFIER', null, 'a')
+      node = new utils.ASTNode('call', [
+        new utils.ASTNode('LPAREN', [], '('),
+        new utils.ASTNode('INTEGER', [], '1'),
+        new utils.ASTNode('RPAREN', [], ')')
+      ]);
+
+      expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
+
+      tokens = [
+        {token: '(', type: 'LPAREN'},
+        {token: '1', type: 'INTEGER'},
+        {token: '2', type: 'INTEGER'},
+        {token: ')', type: 'RPAREN'}
+      ];
+      node = new utils.ASTNode('call', [
+        new utils.ASTNode('LPAREN', [], '('),
+        new utils.ASTNode('INTEGER', [], '1'),
+        new utils.ASTNode('INTEGER', [], '2'),
+        new utils.ASTNode('RPAREN', [], ')')
       ]);
 
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);

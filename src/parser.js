@@ -24,7 +24,7 @@ module.exports.formatRules = function(raw_rules) {
 
             if (is_token) {
               if (stream.matchesToken(option)) {
-                children.push(new utils.ASTNode(option, null, stream.peekToken()));
+                children.push(new utils.ASTNode(option, [], stream.peekToken()));
                 stream.advance();
                 option_passed = true;
                 occurances++;
@@ -40,6 +40,8 @@ module.exports.formatRules = function(raw_rules) {
                 break;
               }
             }
+
+            option_passed = false;
           }
         } while (one_or_more && option_passed && !stream.isEOF())
 

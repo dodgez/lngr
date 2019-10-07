@@ -1,6 +1,6 @@
 {
   "name": "lngr",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "description": "A lexing and parsing library",
   "main": "index.js",
   "scripts": {

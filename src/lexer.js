@@ -30,7 +30,7 @@ module.exports.lex = function(tokens, stream) {
     last_token = cur_token;
   }
 
-  if (last_token) tokenized.push({token: expr, type: last_token ? last_token.name : last_token});
+  if (last_token && !last_token.ignore) tokenized.push({token: expr, type: last_token ? last_token.name : last_token});
 
   return tokenized;
 }

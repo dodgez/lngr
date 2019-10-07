@@ -4,15 +4,15 @@ let fs = require('fs');
 let lexer = require('./../src/lexer');
 let utils = require('./../src/utils');
 
-describe('Lexer', () => {
-  describe('formats', () => {
-    it('formats one token', () => {
+describe('Lexer', function() {
+  describe('formats', function() {
+    it('formats one token', function() {
       expect(lexer.formatTokens([{name: 'INTEGER', expr: '[0-9]+'}])).to.deep.equal(
         [{name: 'INTEGER', expr: '^[0-9]+$'}]
       );
     });
 
-    it('formats independent tokens', () => {
+    it('formats independent tokens', function() {
       expect(lexer.formatTokens([
         {name: 'INTEGER', expr: '[0-9]+'},
         {name: 'WHITESPACE', expr: '( |\t|\r|\n)+'}
@@ -22,7 +22,7 @@ describe('Lexer', () => {
       ]);
     });
 
-    it('formats two simple dependent tokens', () => {
+    it('formats two simple dependent tokens', function() {
       expect(lexer.formatTokens([
         {name: 'INTEGER', expr: '[0-9]+'},
         {name: 'INTEGER2', expr: 'INTEGER\\.'}
@@ -32,7 +32,7 @@ describe('Lexer', () => {
       ]);
     });
 
-    it('formats two dependent tokens', () => {
+    it('formats two dependent tokens', function() {
       expect(lexer.formatTokens([
         {name: 'INTEGER', expr: '[0-9]+'},
         {name: 'FLOAT', expr: 'INTEGER\\.(INTEGER)?'}
@@ -43,27 +43,27 @@ describe('Lexer', () => {
     });
   });
 
-  describe('sample', () => {
+  describe('sample', function() {
     let tokens;
 
-    before(() => {
+    before(function() {
       let grammar = JSON.parse(fs.readFileSync('./sample_grammar.json', 'utf8'));
       tokens = lexer.formatTokens(grammar.tokens);
     });
 
-    it('lexes a character', () => {
+    it('lexes a character', function() {
       expect(lexer.lex(tokens, utils.getStringStream('a'))).to.deep.equal(
         [{token: 'a', type: 'IDENTIFIER'}]
       );
     });
 
-    it('lexes integers', () => {
+    it('lexes integers', function() {
       expect(lexer.lex(tokens, utils.getStringStream('123'))).to.deep.equal(
         [{token: '123', type: 'INTEGER'}]
       );
     });
 
-    it('lexes floats', () => {
+    it('lexes floats', function() {
       expect(lexer.lex(tokens, utils.getStringStream('12.3'))).to.deep.equal(
         [{token: '12.3', type: 'FLOAT'}]
       );
@@ -80,7 +80,7 @@ describe('Lexer', () => {
       );
     });
 
-    it('lexes multiple types', () => {
+    it('lexes multiple types', function() {
       expect(lexer.lex(tokens, utils.getStringStream('12.3 123 abc'))).to.deep.equal(
         [
           {token: '12.3', type: 'FLOAT'},
@@ -90,7 +90,7 @@ describe('Lexer', () => {
       );
     });
 
-    it('lexes a single character ending token', () => {
+    it('lexes a single character ending token', function() {
       expect(lexer.lex(tokens, utils.getStringStream(' 2'))).to.deep.equal(
         [
           {token: '2', type: 'INTEGER'}
@@ -98,7 +98,7 @@ describe('Lexer', () => {
       );
     });
 
-    it('lexes a single character ending token after an unknown', () => {
+    it('lexes a single character ending token after an unknown', function() {
       expect(lexer.lex(tokens, utils.getStringStream('|2'))).to.deep.equal(
         [
           {token: '|', type: null},
@@ -107,7 +107,7 @@ describe('Lexer', () => {
       );
     });
 
-    it('lexes an unknown starting character', () => {
+    it('lexes an unknown starting character', function() {
       expect(lexer.lex(tokens, utils.getStringStream('|'))).to.deep.equal(
         [{token: '|', type: null}]
       );

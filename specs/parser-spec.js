@@ -3,9 +3,9 @@ let expect = require('chai').expect;
 let parser = require('./../src/parser');
 let utils = require('./../src/utils');
 
-describe('Parser', () => {
-  describe('formats', () => {
-    it('formats one rule', () => {
+describe('Parser', function() {
+  describe('formats', function() {
+    it('formats one rule', function() {
       let rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'}]);
 
       expect(rules[0]).to.have.property('name', 'expression');
@@ -13,7 +13,7 @@ describe('Parser', () => {
       expect(rules[0]).to.respondTo('parse');
     });
 
-    it('formats dependent rules', () => {
+    it('formats dependent rules', function() {
       let rules = parser.formatRules([
         {name: 'statement', expr: 'ASSIGNMENT IDENTIFIER expression'},
         {name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'}
@@ -25,8 +25,8 @@ describe('Parser', () => {
     });
   });
 
-  describe('sample', () => {
-    it('parses one rule', () => {
+  describe('sample', function() {
+    it('parses one rule', function() {
       let tokens = [
         {token: '+', type: 'BINARY_OP'},
         {token: '1', type: 'INTEGER'},
@@ -38,7 +38,7 @@ describe('Parser', () => {
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
     });
 
-    it('parses an OR rule', () => {
+    it('parses an OR rule', function() {
       let tokens = [
         {token: '+', type: 'BINARY_OP'},
         {token: 'a', type: 'IDENTIFIER'},
@@ -50,7 +50,7 @@ describe('Parser', () => {
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
     });
 
-    it('parses a recursive rule', () => {
+    it('parses a recursive rule', function() {
       let tokens = [
         {token: '+', type: 'BINARY_OP'},
         {token: '+', type: 'BINARY_OP'},
@@ -72,7 +72,7 @@ describe('Parser', () => {
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
     });
 
-    it('parses a deeper recursive rule', () => {
+    it('parses a deeper recursive rule', function() {
       let tokens = [
         {token: '+', type: 'BINARY_OP'},
         {token: '+', type: 'BINARY_OP'},
@@ -100,7 +100,7 @@ describe('Parser', () => {
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
     });
 
-    it('parses dependent rules', () => {
+    it('parses dependent rules', function() {
       let tokens = [
         {token: '=', type: 'ASSIGNMENT'},
         {token: 'a', type: 'IDENTIFIER'},
@@ -125,7 +125,7 @@ describe('Parser', () => {
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
     });
 
-    it('parses rules with optional arguments', () => {
+    it('parses rules with optional arguments', function() {
       let tokens = [
         {token: '+', type: 'OPERATOR'},
         {token: 'a', type: 'IDENTIFIER'}
@@ -154,7 +154,7 @@ describe('Parser', () => {
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
     });
 
-    it('parses rules with one-or-more type arguments', () => {
+    it('parses rules with one-or-more type arguments', function() {
       let tokens = [
         {token: 'print', type: 'PRINT'}
       ];
@@ -190,7 +190,7 @@ describe('Parser', () => {
       expect(rules[0].parse(utils.getTokenStream(tokens))).to.deep.equal(node);
     });
 
-    it('parses rules with zero-or-more type arguments', () => {
+    it('parses rules with zero-or-more type arguments', function() {
       let tokens = [
         {token: 'print', type: 'PRINT'}
       ];

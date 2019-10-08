@@ -2,10 +2,45 @@ let utils = require('./utils');
 
 module.exports.formatRules = function(raw_rules) {
   let rules = raw_rules.map(rule => Object.assign(Object.assign({}, rule), {
+    matches: function() {},
     parse: function() {}
   }));
 
   rules = rules.map(rule => {
+    rule.matches = function(stream) {
+      for (let expr of rule.expr.split(' ')) {
+        let optional = expr.endsWith('?');
+        let one_or_more = expr.endsWith('+');
+        if (expr.endsWith('*')) optional = one_or_more = true;
+        let paranthesized = expr.includes('(') || expr.includes(')');
+        let option_passed = false;
+
+        if (optional || one_or_more || paranthesized) expr = expr.replace(/(\(|\)|\?|\+|\*)/g, '');
+
+        for (let option of expr.split('|')) {
+          let is_token = option.match(/^[A-Z]/) ? true : false;
+
+          if (is_token) {
+            if (stream.matchesToken(option)) {
+              return true;
+            }
+          } else {
+            let matches = rules.filter(rule => rule.name == option)[0].matches(stream);
+
+            if (matches) {
+              return true;
+            }
+          }
+
+          option_passed = false;
+        }
+
+        if (!option_passed && !optional) return false;
+      }
+
+      return false;
+    }
+
     rule.parse = function(stream) {
       let children = []
       for (let expr of rule.expr.split(' ')) {
@@ -31,9 +66,8 @@ module.exports.formatRules = function(raw_rules) {
                 break;
               }
             } else {
-              let node = rules.filter(rule => rule.name == option)[0].parse(stream);
-
-              if (node) {
+              if (rules.filter(rule => rule.name == option)[0].matches(stream)) {
+                let node = rules.filter(rule => rule.name == option)[0].parse(stream);
                 children.push(node);
                 option_passed = true;
                 occurances++;
@@ -45,7 +79,9 @@ module.exports.formatRules = function(raw_rules) {
           }
         } while (one_or_more && option_passed && !stream.isEOF())
 
-        if (!option_passed && !optional && (!one_or_more || (one_or_more && occurances == 0))) return null;
+        if (!option_passed && !optional && (!one_or_more || (one_or_more && occurances == 0))) {
+          throw new Error(`Unexpected token when parsing ${rule.name} expected to find ${expr} but found ${stream.peekToken()}`);
+        }
       }
 
       return new utils.ASTNode(rule.name, children);

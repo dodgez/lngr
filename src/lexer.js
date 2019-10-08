@@ -21,8 +21,7 @@ module.exports.lex = function(tokens, stream) {
         expr = "";
         continue;
       } else {
-        tokenized.push({token: expr, type: null});
-        expr = "";
+        throw new Error(`Token not supported: ${expr}`);
       }
     }
     

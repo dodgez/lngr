@@ -25,13 +25,34 @@ describe('Parser', function() {
     });
   });
 
+  describe('matches', function() {
+    it('a direct token', function() {
+      // let tokens = [{token: '+', type: 'BINARY_OP'}];
+      // let rules = parser.testFormatRules([{name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'}]);
+
+      // expect(rules[0].matches(utils.getTokenStream(tokens))).to.be.equal(true);
+    });
+
+    it('an indirect token', function() {
+      // let tokens = [{token: 'asdf', type: 'IDENTIFIER'}];
+      // let rules = parser.testFormatRules(
+      //   [
+      //     {name: 'statement', expr: 'type IDENTIFIER'},
+      //     {name: 'type', expr: 'IDENTIFIER'},
+      //   ]
+      // );
+
+      // expect(rules[0].matches(utils.getTokenStream(tokens))).to.be.equal(true);
+    });
+  });
+
   describe('sample', function() {
     it('parses one rule', function() {
       let tokens = [
         {token: '+', type: 'BINARY_OP'},
         {token: '1', type: 'INTEGER'},
         {token: '1', type: 'INTEGER'},
-      ]
+      ];
       let node = new utils.ASTNode('expression', tokens.map(token => new utils.ASTNode(token.type, [], token.token)));
       let rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'}]);
 
@@ -158,12 +179,11 @@ describe('Parser', function() {
       let tokens = [
         {token: 'print', type: 'PRINT'}
       ];
-      let node = null;
       let rules = parser.formatRules([
         {name: 'print', expr: 'PRINT (INTEGER|IDENTIFIER)+'}
       ]);
 
-      expect(rules[0].parse(utils.getTokenStream(tokens))).to.equal(node);
+      expect(rules[0].parse.bind(null, utils.getTokenStream(tokens))).to.throw("Unexpected token when parsing print expected to find INTEGER|IDENTIFIER but found false");
 
       tokens = [
         {token: 'print', type: 'PRINT'},

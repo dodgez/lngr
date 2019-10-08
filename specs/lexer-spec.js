@@ -72,12 +72,7 @@ describe('Lexer', function() {
         [{token: '123.', type: 'FLOAT'}]
       );
 
-      expect(lexer.lex(tokens, utils.getStringStream('.123'))).to.deep.equal(
-        [
-          {token: '.', type: null},
-          {token: '123', type: 'INTEGER'}
-        ]
-      );
+      expect(lexer.lex.bind(null, tokens, utils.getStringStream('.123'))).to.throw('Token not supported: .');
     });
 
     it('lexes multiple types', function() {
@@ -95,21 +90,6 @@ describe('Lexer', function() {
         [
           {token: '2', type: 'INTEGER'}
         ]
-      );
-    });
-
-    it('lexes a single character ending token after an unknown', function() {
-      expect(lexer.lex(tokens, utils.getStringStream('|2'))).to.deep.equal(
-        [
-          {token: '|', type: null},
-          {token: '2', type: 'INTEGER'}
-        ]
-      );
-    });
-
-    it('lexes an unknown starting character', function() {
-      expect(lexer.lex(tokens, utils.getStringStream('|'))).to.deep.equal(
-        [{token: '|', type: null}]
       );
     });
   });

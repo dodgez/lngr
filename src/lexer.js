@@ -19,6 +19,7 @@ module.exports.lex = function(tokens, stream) {
       if (last_token) {
         if (!last_token.ignore) tokenized.push({token: expr.slice(0, expr.length - 1), type: last_token.name});
         expr = "";
+        last_token = cur_token;
         continue;
       } else {
         throw new Error(`Token not supported: ${expr}`);

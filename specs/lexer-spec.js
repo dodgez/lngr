@@ -92,5 +92,11 @@ describe('Lexer', function() {
         ]
       );
     });
+
+    it('throws an error for unknown token', function() {
+      expect(lexer.lex.bind(null, tokens, utils.getStringStream('|'))).to.throw("Token not supported: |");
+
+      expect(lexer.lex.bind(null, tokens, utils.getStringStream('\n|'))).to.throw("Token not supported: |");
+    });
   });
 });

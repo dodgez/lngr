@@ -1,7 +1,4 @@
 class StringStream {
-  string;
-  index;
-
   constructor(string) {
     this.string = string;
     this.index = 0;
@@ -21,9 +18,6 @@ class StringStream {
 }
 
 class TokenStream {
-  tokens;
-  index;
-
   constructor(tokens) {
     this.tokens = tokens;
     this.index = 0;
@@ -51,10 +45,6 @@ class TokenStream {
 }
 
 class ASTNode {
-  type;
-  children;
-  token;
-
   constructor(type, children, token = null) {
     this.type = type;
     this.children = children;

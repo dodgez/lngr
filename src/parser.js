@@ -1,5 +1,15 @@
 let utils = require('./utils');
 
+module.exports.parse = function(rules, stream) {
+  let parsed = rules[0].parse(stream);
+  
+  if (!stream.isEOF()) {
+    throw new Error(`Unexpected token: ${stream.peekToken()}`);
+  }
+
+  return parsed;
+}
+
 module.exports.formatRules = function(raw_rules) {
   let rules = raw_rules.map(rule => Object.assign(Object.assign({}, rule), {
     matches: function() {},

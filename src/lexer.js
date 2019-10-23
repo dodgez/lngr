@@ -46,7 +46,7 @@ module.exports.formatTokens = function(raw_tokens) {
 
   tokens.forEach(token => {
     if (!token.expr.startsWith('^')) token.expr = '^' + token.expr;
-    if (!token.expr.endsWith('$')) token.expr = token.expr + '$';
+    if (!token.expr.endsWith('$') || token.expr.endsWith('\\$')) token.expr = token.expr + '$';
   });
 
   return tokens;

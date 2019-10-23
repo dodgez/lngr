@@ -41,6 +41,14 @@ describe('Lexer', function() {
         {name: 'FLOAT', expr: '^[0-9]+\\.([0-9]+)?$'}
       ]);
     });
+
+    it('formats a token with a $ in it', function() {
+      expect(lexer.formatTokens([
+        {name: 'DOLLARSIGN', expr: '\\$'}
+      ])).to.deep.equal([
+        {name: 'DOLLARSIGN', expr: '^\\$$'}
+      ]);
+    });
   });
 
   describe('sample', function() {

@@ -2,11 +2,11 @@ class StringStream {
   constructor(string) {
     this.string = string;
     this.index = 0;
-    this.line = 0;
+    this.line = 1;
     this.col = 0;
 
     if (this.peek() === '\n') {
-      this.line = 1;
+      this.line = 2;
     }
   }
 

@@ -16,7 +16,7 @@ class StringStream {
 
   advance() {
     this.index++;
-    if (!this.isEOF) {
+    if (!this.isEOF()) {
       if (this.peek() === '\n') {
         this.line += 1;
         this.col = 0;

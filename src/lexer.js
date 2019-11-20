@@ -17,12 +17,20 @@ module.exports.lex = function(tokens, stream) {
 
     if (!cur_token) {
       if (last_token) {
-        if (!last_token.ignore) tokenized.push({token: expr.slice(0, expr.length - 1), type: last_token.name});
+        if (!last_token.ignore) {
+          tokenized.push({
+            token: expr.slice(0, expr.length - 1),
+            type: last_token.name,
+            line: stream.line,
+            col: stream.col
+          });
+        }
         expr = "";
         last_token = cur_token;
         continue;
       } else {
-        throw new Error(`Token not supported: ${expr}`);
+        throw new Error(`Unrecognized token '${expr}'.` +
+          ` Line: ${stream.line} Column: ${stream.col}`);
       }
     }
     
@@ -30,7 +38,14 @@ module.exports.lex = function(tokens, stream) {
     last_token = cur_token;
   }
 
-  if (last_token && !last_token.ignore) tokenized.push({token: expr, type: last_token ? last_token.name : last_token});
+  if (last_token && !last_token.ignore) {
+    tokenized.push({
+      token: expr,
+      type: last_token ? last_token.name : last_token,
+      line: stream.line,
+      col: stream.col
+    });
+  }
 
   return tokenized;
 }

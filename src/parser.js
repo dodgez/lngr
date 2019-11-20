@@ -4,7 +4,7 @@ module.exports.parse = function(rules, stream) {
   let parsed = rules[0].parse(stream);
   
   if (!stream.isEOF()) {
-    throw new Error(`Unexpected token: ${stream.peekToken()}`);
+    throw new Error(`Unexpected extra token '${stream.peekToken()}' line ${stream.peekLineInfo().line} col ${stream.peekLineInfo().col}`);
   }
 
   return parsed;
@@ -90,7 +90,14 @@ module.exports.formatRules = function(raw_rules) {
         } while (one_or_more && option_passed && !stream.isEOF())
 
         if (!option_passed && !optional && (!one_or_more || (one_or_more && occurances == 0))) {
-          throw new Error(`Unexpected token when parsing ${rule.name} expected to find ${expr} but found ${stream.peekToken()}`);
+          if (stream.isEOF()) {
+            throw new Error(`Error when parsing '${rule.name}'.` +
+              ` Expected to find '${expr}' but found 'EOF'`);
+          } else {
+            throw new Error(`Unexpected token when parsing '${rule.name}'.` +
+              ` Expected to find '${expr}' but found '${stream.peekToken()}'` +
+              ` Line: ${stream.peekLineInfo().line} Column: ${stream.peekLineInfo().col}`);
+          }
         }
       }
 

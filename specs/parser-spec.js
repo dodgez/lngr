@@ -49,9 +49,9 @@ describe('Parser', function() {
   describe('sample', function() {
     it('parses one rule', function() {
       let tokens = [
-        {token: '+', type: 'BINARY_OP'},
-        {token: '1', type: 'INTEGER'},
-        {token: '1', type: 'INTEGER'},
+        {token: '+', type: 'BINARY_OP', line: 0, col: 0},
+        {token: '1', type: 'INTEGER', line: 0, col: 0},
+        {token: '1', type: 'INTEGER', line: 0, col: 0},
       ];
       let node = new utils.ASTNode('expression', tokens.map(token => new utils.ASTNode(token.type, [], token.token)));
       let rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'}]);
@@ -61,9 +61,9 @@ describe('Parser', function() {
 
     it('parses an OR rule', function() {
       let tokens = [
-        {token: '+', type: 'BINARY_OP'},
-        {token: 'a', type: 'IDENTIFIER'},
-        {token: '1', type: 'INTEGER'}
+        {token: '+', type: 'BINARY_OP', line: 0, col: 0},
+        {token: 'a', type: 'IDENTIFIER', line: 0, col: 0},
+        {token: '1', type: 'INTEGER', line: 1, col: 0}
       ];
       let node = new utils.ASTNode('expression', tokens.map(token => new utils.ASTNode(token.type, [], token.token)));
       let rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER|IDENTIFIER INTEGER'}]);
@@ -73,11 +73,11 @@ describe('Parser', function() {
 
     it('parses a recursive rule', function() {
       let tokens = [
-        {token: '+', type: 'BINARY_OP'},
-        {token: '+', type: 'BINARY_OP'},
-        {token: '1', type: 'INTEGER'},
-        {token: '1', type: 'INTEGER'},
-        {token: 'a', type: 'IDENTIFIER'}
+        {token: '+', type: 'BINARY_OP', line: 0, col: 0},
+        {token: '+', type: 'BINARY_OP', line: 1, col: 0},
+        {token: '1', type: 'INTEGER', line: 1, col: 0},
+        {token: '1', type: 'INTEGER', line: 2, col: 0},
+        {token: 'a', type: 'IDENTIFIER', line: 2, col: 0}
       ];
       let node = new utils.ASTNode('expression', [
         new utils.ASTNode('BINARY_OP', [], '+'),
@@ -95,13 +95,13 @@ describe('Parser', function() {
 
     it('parses a deeper recursive rule', function() {
       let tokens = [
-        {token: '+', type: 'BINARY_OP'},
-        {token: '+', type: 'BINARY_OP'},
-        {token: '1', type: 'INTEGER'},
-        {token: 'a', type: 'IDENTIFIER'},
-        {token: '+', type: 'BINARY_OP'},
-        {token: 'a', type: 'IDENTIFIER'},
-        {token: '1', type: 'INTEGER'}
+        {token: '+', type: 'BINARY_OP', line: 0, col: 0},
+        {token: '+', type: 'BINARY_OP', line: 0, col: 0},
+        {token: '1', type: 'INTEGER', line: 0, col: 0},
+        {token: 'a', type: 'IDENTIFIER', line: 0, col: 0},
+        {token: '+', type: 'BINARY_OP', line: 0, col: 0},
+        {token: 'a', type: 'IDENTIFIER', line: 0, col: 0},
+        {token: '1', type: 'INTEGER', line: 0, col: 0}
       ];
       let node = new utils.ASTNode('expression', [
         new utils.ASTNode('BINARY_OP', [], '+'),
@@ -123,11 +123,11 @@ describe('Parser', function() {
 
     it('parses dependent rules', function() {
       let tokens = [
-        {token: '=', type: 'ASSIGNMENT'},
-        {token: 'a', type: 'IDENTIFIER'},
-        {token: '+', type: 'BINARY_OP'},
-        {token: '1', type: 'INTEGER'},
-        {token: '1', type: 'INTEGER'}
+        {token: '=', type: 'ASSIGNMENT', line: 0, col: 0},
+        {token: 'a', type: 'IDENTIFIER', line: 0, col: 0},
+        {token: '+', type: 'BINARY_OP', line: 0, col: 0},
+        {token: '1', type: 'INTEGER', line: 0, col: 0},
+        {token: '1', type: 'INTEGER', line: 0, col: 0}
       ];
       let node = new utils.ASTNode('statement', [
         new utils.ASTNode('ASSIGNMENT', [], '='),
@@ -148,8 +148,8 @@ describe('Parser', function() {
 
     it('parses rules with optional arguments', function() {
       let tokens = [
-        {token: '+', type: 'OPERATOR'},
-        {token: 'a', type: 'IDENTIFIER'}
+        {token: '+', type: 'OPERATOR', line: 0, col: 0},
+        {token: 'a', type: 'IDENTIFIER', line: 0, col: 0}
       ];
       let node = new utils.ASTNode('expression', [
         new utils.ASTNode('OPERATOR', [], '+'),
@@ -162,9 +162,9 @@ describe('Parser', function() {
       expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
 
       tokens = [
-        {token: '+', type: 'OPERATOR'},
-        {token: 'a', type: 'IDENTIFIER'},
-        {token: 'a', type: 'IDENTIFIER'}
+        {token: '+', type: 'OPERATOR', line: 0, col: 0},
+        {token: 'a', type: 'IDENTIFIER', line: 0, col: 0},
+        {token: 'a', type: 'IDENTIFIER', line: 0, col: 0}
       ];
       node = new utils.ASTNode('expression', [
         new utils.ASTNode('OPERATOR', [], '+'),
@@ -177,17 +177,17 @@ describe('Parser', function() {
 
     it('parses rules with one-or-more type arguments', function() {
       let tokens = [
-        {token: 'print', type: 'PRINT'}
+        {token: 'print', type: 'PRINT', line: 0, col: 0}
       ];
       let rules = parser.formatRules([
         {name: 'print', expr: 'PRINT (INTEGER|IDENTIFIER)+'}
       ]);
 
-      expect(rules[0].parse.bind(null, utils.getTokenStream(tokens))).to.throw("Unexpected token when parsing print expected to find INTEGER|IDENTIFIER but found false");
+      expect(rules[0].parse.bind(null, utils.getTokenStream(tokens))).to.throw("Error when parsing 'print'. Expected to find 'INTEGER|IDENTIFIER' but found 'EOF'");
 
       tokens = [
-        {token: 'print', type: 'PRINT'},
-        {token: '1', type: 'INTEGER'}
+        {token: 'print', type: 'PRINT', line: 0, col: 0},
+        {token: '1', type: 'INTEGER', line: 0, col: 0}
       ];
       node = new utils.ASTNode('print', [
         new utils.ASTNode('PRINT', [], 'print'),
@@ -197,9 +197,9 @@ describe('Parser', function() {
       expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
 
       tokens = [
-        {token: 'print', type: 'PRINT'},
-        {token: '1', type: 'INTEGER'},
-        {token: 'a', type: 'IDENTIFIER'}
+        {token: 'print', type: 'PRINT', line: 0, col: 0},
+        {token: '1', type: 'INTEGER', line: 0, col: 0},
+        {token: 'a', type: 'IDENTIFIER', line: 0, col: 0}
       ];
       node = new utils.ASTNode('print', [
         new utils.ASTNode('PRINT', [], 'print'),
@@ -212,8 +212,8 @@ describe('Parser', function() {
 
     it('parses rules with zero-or-more type arguments', function() {
       let tokens = [
-        {token: '(', type: 'LPAREN'},
-        {token: ')', type: 'RPAREN'}
+        {token: '(', type: 'LPAREN', line: 0, col: 0},
+        {token: ')', type: 'RPAREN', line: 0, col: 0}
       ];
       let node = new utils.ASTNode('call', [
         new utils.ASTNode('LPAREN', [], '('),
@@ -226,9 +226,9 @@ describe('Parser', function() {
       expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
 
       tokens = [
-        {token: '(', type: 'LPAREN'},
-        {token: '1', type: 'INTEGER'},
-        {token: ')', type: 'RPAREN'}
+        {token: '(', type: 'LPAREN', line: 0, col: 0},
+        {token: '1', type: 'INTEGER', line: 0, col: 0},
+        {token: ')', type: 'RPAREN', line: 0, col: 0}
       ];
       node = new utils.ASTNode('call', [
         new utils.ASTNode('LPAREN', [], '('),
@@ -239,10 +239,10 @@ describe('Parser', function() {
       expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
 
       tokens = [
-        {token: '(', type: 'LPAREN'},
-        {token: '1', type: 'INTEGER'},
-        {token: '2', type: 'INTEGER'},
-        {token: ')', type: 'RPAREN'}
+        {token: '(', type: 'LPAREN', line: 0, col: 0},
+        {token: '1', type: 'INTEGER', line: 0, col: 0},
+        {token: '2', type: 'INTEGER', line: 0, col: 0},
+        {token: ')', type: 'RPAREN', line: 0, col: 0}
       ];
       node = new utils.ASTNode('call', [
         new utils.ASTNode('LPAREN', [], '('),
@@ -256,14 +256,14 @@ describe('Parser', function() {
 
     it('throws an error for extra tokens', function() {
       let tokens = [
-        {token: '1', type: 'INTEGER'},
-        {token: 'test', type: 'ID'}
+        {token: '1', type: 'INTEGER', line: 2, col: 1},
+        {token: 'test', type: 'ID', line: 3, col: 4}
       ];
       let rules = parser.formatRules([
         {name: 'program', expr: 'INTEGER+'}
       ]);
 
-      expect(parser.parse.bind(null, rules, utils.getTokenStream(tokens))).to.throw("Unexpected token: test");
+      expect(parser.parse.bind(null, rules, utils.getTokenStream(tokens))).to.throw("Unexpected extra token 'test' line 3 col 4");
     });
   });
 });

@@ -76,9 +76,15 @@ module.exports.formatRules = function(raw_rules) {
                 break;
               }
             } else {
-              if (rules.filter(rule => rule.name == option)[0].matches(stream)) {
-                let node = rules.filter(rule => rule.name == option)[0].parse(stream);
-                children.push(node);
+              let option_rule = rules.find(rule => rule.name == option);
+              
+              if (option_rule.matches(stream)) {
+                let node = option_rule.parse(stream);
+                if (!option_rule.squash) {
+                  children.push(node);
+                } else {
+                  children = children.concat(node.children);
+                }
                 option_passed = true;
                 occurances++;
                 break;

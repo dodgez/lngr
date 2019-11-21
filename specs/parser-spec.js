@@ -265,5 +265,22 @@ describe('Parser', function() {
 
       expect(parser.parse.bind(null, rules, utils.getTokenStream(tokens))).to.throw("Unexpected extra token 'test' line 3 col 4");
     });
+
+    it('squashes unnecessary nested tokens', function() {
+      let tokens = [
+        {token: 'test', type: 'IDENTIFIER', line: 1, col: 1},
+        {token: 'case', type: 'IDENTIFIER', line: 1, col: 5}
+      ];
+      let rules = parser.formatRules([
+        {name: 'tree', expr: "unnecessary"},
+        {name: 'unnecessary', expr: "(IDENTIFIER)*", squash: true}
+      ]);
+
+      node = new utils.ASTNode('tree', [
+        new utils.ASTNode('IDENTIFIER', [], 'test'),
+        new utils.ASTNode('IDENTIFIER', [], 'case')
+      ]);
+      expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
+    });
   });
 });

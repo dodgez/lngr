@@ -1,5 +1,7 @@
 # lngr
 
+[![Actions Status](https://github.com/dodgez/lngr/workflows/CI/badge.svg)](https://github.com/dodgez/lngr/actions)
+
 This library provides functions for lexing and parsing a grammar based on a definition file (see [sample_grammar.json](https://github.com/dodgez/lngr/blob/master/sample_grammar.json)).
 
 Currently a lexer and parser are functional.

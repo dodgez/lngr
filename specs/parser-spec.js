@@ -183,7 +183,7 @@ describe('Parser', function() {
         {name: 'print', expr: 'PRINT (INTEGER|IDENTIFIER)+'}
       ]);
 
-      expect(rules[0].parse.bind(null, utils.getTokenStream(tokens))).to.throw("Error when parsing 'print'. Expected to find 'INTEGER|IDENTIFIER' but found 'EOF'");
+      expect(parser.parse.bind(null, rules, utils.getTokenStream(tokens))).to.throw("Error when parsing 'print'. Expected to find 'INTEGER|IDENTIFIER' but found 'EOF'");
 
       tokens = [
         {token: 'print', type: 'PRINT', line: 1, col: 1},

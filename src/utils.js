@@ -3,7 +3,7 @@ class StringStream {
     this.string = string;
     this.index = 0;
     this.line = 1;
-    this.col = 0;
+    this.col = 1;
 
     if (this.peek() === '\n') {
       this.line = 2;
@@ -19,7 +19,7 @@ class StringStream {
     if (!this.isEOF()) {
       if (this.peek() === '\n') {
         this.line += 1;
-        this.col = 0;
+        this.col = 1;
       }
     }
   }

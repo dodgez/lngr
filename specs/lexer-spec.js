@@ -61,34 +61,34 @@ describe('Lexer', function() {
 
     it('lexes a character', function() {
       expect(lexer.lex(tokens, utils.getStringStream('a'))).to.deep.equal(
-        [{token: 'a', type: 'IDENTIFIER', line: 0, col: 0}]
+        [{token: 'a', type: 'IDENTIFIER', line: 1, col: 1}]
       );
     });
 
     it('lexes integers', function() {
       expect(lexer.lex(tokens, utils.getStringStream('123'))).to.deep.equal(
-        [{token: '123', type: 'INTEGER', line: 0, col: 0}]
+        [{token: '123', type: 'INTEGER', line: 1, col: 1}]
       );
     });
 
     it('lexes floats', function() {
       expect(lexer.lex(tokens, utils.getStringStream('12.3'))).to.deep.equal(
-        [{token: '12.3', type: 'FLOAT', line: 0, col: 0}]
+        [{token: '12.3', type: 'FLOAT', line: 1, col: 1}]
       );
 
       expect(lexer.lex(tokens, utils.getStringStream('123.'))).to.deep.equal(
-        [{token: '123.', type: 'FLOAT', line: 0, col: 0}]
+        [{token: '123.', type: 'FLOAT', line: 1, col: 1}]
       );
 
-      expect(lexer.lex.bind(null, tokens, utils.getStringStream('.123'))).to.throw('Unrecognized token \'.\'. Line: 0 Column: 0');
+      expect(lexer.lex.bind(null, tokens, utils.getStringStream('.123'))).to.throw('Unrecognized token \'.\'. Line: 1 Column: 1');
     });
 
     it('lexes multiple types', function() {
       expect(lexer.lex(tokens, utils.getStringStream('12.3 123 abc'))).to.deep.equal(
         [
-          {token: '12.3', type: 'FLOAT', line: 0, col: 0},
-          {token: '123', type: 'INTEGER', line: 0, col: 0},
-          {token: 'abc', type: 'IDENTIFIER', line: 0, col: 0},
+          {token: '12.3', type: 'FLOAT', line: 1, col: 1},
+          {token: '123', type: 'INTEGER', line: 1, col: 1},
+          {token: 'abc', type: 'IDENTIFIER', line: 1, col: 1},
         ]
       );
     });
@@ -96,15 +96,15 @@ describe('Lexer', function() {
     it('lexes a single character ending token', function() {
       expect(lexer.lex(tokens, utils.getStringStream(' 2'))).to.deep.equal(
         [
-          {token: '2', type: 'INTEGER', line: 0, col: 0}
+          {token: '2', type: 'INTEGER', line: 1, col: 1}
         ]
       );
     });
 
     it('throws an error for unknown token', function() {
-      expect(lexer.lex.bind(null, tokens, utils.getStringStream('|'))).to.throw("Unrecognized token \'|\'. Line: 0 Column: 0");
+      expect(lexer.lex.bind(null, tokens, utils.getStringStream('|'))).to.throw("Unrecognized token \'|\'. Line: 1 Column: 1");
 
-      expect(lexer.lex.bind(null, tokens, utils.getStringStream('\n|'))).to.throw("Unrecognized token \'|\'. Line: 1 Column: 0");
+      expect(lexer.lex.bind(null, tokens, utils.getStringStream('\n|'))).to.throw("Unrecognized token \'|\'. Line: 2 Column: 1");
     });
   });
 });

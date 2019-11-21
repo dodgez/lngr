@@ -183,7 +183,7 @@ describe('Parser', function() {
         {name: 'print', expr: 'PRINT (INTEGER|IDENTIFIER)+'}
       ]);
 
-      expect(rules[0].parse.bind(null, utils.getTokenStream(tokens))).to.throw("Error when parsing 'print'. Expected to find 'INTEGER|IDENTIFIER' but found 'EOF'");
+      expect(parser.parse.bind(null, rules, utils.getTokenStream(tokens))).to.throw("Error when parsing 'print'. Expected to find 'INTEGER|IDENTIFIER' but found 'EOF'");
 
       tokens = [
         {token: 'print', type: 'PRINT', line: 1, col: 1},
@@ -281,6 +281,34 @@ describe('Parser', function() {
         new utils.ASTNode('IDENTIFIER', [], 'case')
       ]);
       expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
+    });
+
+    it('calls a start callback', function() {
+      let nodes_reached = [];
+      let tokens = [{token: 'test', type: 'IDENTIFIER', line: 1, col: 1}];
+      let rules = parser.formatRules([{name: 'program', expr: 'IDENTIFIER'}]);
+
+      parser.parse(rules, utils.getTokenStream(tokens), function(type) {
+        nodes_reached.push(type);
+      });
+
+      expect(nodes_reached).to.deep.equal(['program', 'IDENTIFIER']);
+    });
+
+    it('calls an end callback', function() {
+      let nodes_reached = [];
+      let tokens = [{token: 'test', type: 'IDENTIFIER', line: 1, col: 1}];
+      let rules = parser.formatRules([{name: 'program', expr: 'IDENTIFIER'}]);
+      let nodes = [
+        new utils.ASTNode('IDENTIFIER', [], 'test'),
+        new utils.ASTNode('program', [new utils.ASTNode('IDENTIFIER', [], 'test')])
+      ];
+
+      parser.parse(rules, utils.getTokenStream(tokens), (type) => {}, function(node) {
+        nodes_reached.push(node);
+      });
+
+      expect(nodes_reached).to.deep.equal(nodes);
     });
   });
 });

@@ -1,7 +1,7 @@
 let utils = require('./utils');
 
-module.exports.parse = function(rules, stream) {
-  let parsed = rules[0].parse(stream);
+module.exports.parse = function(rules, stream, start_callback=()=>{}, end_callback=(node)=>{}) {
+  let parsed = rules[0].parse(stream, start_callback, end_callback);
   
   if (!stream.isEOF()) {
     throw new Error(`Unexpected extra token '${stream.peekToken()}' line ${stream.peekLineInfo().line} col ${stream.peekLineInfo().col}`);
@@ -51,7 +51,8 @@ module.exports.formatRules = function(raw_rules) {
       return false;
     }
 
-    rule.parse = function(stream) {
+    rule.parse = function(stream, start_callback, end_callback) {
+      start_callback(rule.name);
       let children = []
       for (let expr of rule.expr.split(' ')) {
         let optional = expr.endsWith('?');
@@ -69,7 +70,10 @@ module.exports.formatRules = function(raw_rules) {
 
             if (is_token) {
               if (stream.matchesToken(option)) {
-                children.push(new utils.ASTNode(option, [], stream.peekToken()));
+                start_callback(option);
+                let node = new utils.ASTNode(option, [], stream.peekToken());
+                end_callback(node);
+                children.push(node);
                 stream.advance();
                 option_passed = true;
                 occurances++;
@@ -79,7 +83,7 @@ module.exports.formatRules = function(raw_rules) {
               let option_rule = rules.find(rule => rule.name == option);
               
               if (option_rule.matches(stream)) {
-                let node = option_rule.parse(stream);
+                let node = option_rule.parse(stream, start_callback, end_callback);
                 if (!option_rule.squash) {
                   children.push(node);
                 } else {
@@ -107,7 +111,9 @@ module.exports.formatRules = function(raw_rules) {
         }
       }
 
-      return new utils.ASTNode(rule.name, children);
+      let node = new utils.ASTNode(rule.name, children);
+      end_callback(node);
+      return node;
     }
 
     return rule;

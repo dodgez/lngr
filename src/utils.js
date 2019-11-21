@@ -2,6 +2,12 @@ class StringStream {
   constructor(string) {
     this.string = string;
     this.index = 0;
+    this.line = 1;
+    this.col = 1;
+
+    if (this.peek() === '\n') {
+      this.line = 2;
+    }
   }
 
   peek() {
@@ -10,6 +16,12 @@ class StringStream {
 
   advance() {
     this.index++;
+    if (!this.isEOF()) {
+      if (this.peek() === '\n') {
+        this.line += 1;
+        this.col = 1;
+      }
+    }
   }
 
   isEOF() {
@@ -33,6 +45,15 @@ class TokenStream {
     if (this.isEOF()) return false;
 
     return this.tokens[this.index].token;
+  }
+
+  peekLineInfo() {
+    if (this.isEOF()) return false;
+
+    return {
+      line: this.tokens[this.index].line,
+      col: this.tokens[this.index].col
+    };
   }
 
   advance() {

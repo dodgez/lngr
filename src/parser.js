@@ -53,7 +53,8 @@ module.exports.formatRules = function(raw_rules) {
 
     rule.parse = function(stream, start_callback, end_callback) {
       start_callback(rule.name);
-      let children = []
+      let children = [];
+      let returned_node = new utils.ASTNode(rule.name, children);
       for (let expr of rule.expr.split(' ')) {
         let optional = expr.endsWith('?');
         let one_or_more = expr.endsWith('+');
@@ -72,6 +73,7 @@ module.exports.formatRules = function(raw_rules) {
               if (stream.matchesToken(option)) {
                 start_callback(option);
                 let node = new utils.ASTNode(option, [], stream.peekToken());
+                node.parent = returned_node;
                 end_callback(node);
                 children.push(node);
                 stream.advance();
@@ -84,10 +86,12 @@ module.exports.formatRules = function(raw_rules) {
               
               if (option_rule.matches(stream)) {
                 let node = option_rule.parse(stream, start_callback, end_callback);
+                node.parent = returned_node;
                 if (!option_rule.squash) {
                   children.push(node);
                 } else {
                   children = children.concat(node.children);
+                  returned_node.children = children;
                 }
                 option_passed = true;
                 occurances++;
@@ -111,9 +115,8 @@ module.exports.formatRules = function(raw_rules) {
         }
       }
 
-      let node = new utils.ASTNode(rule.name, children);
-      end_callback(node);
-      return node;
+      end_callback(returned_node);
+      return returned_node;
     }
 
     return rule;

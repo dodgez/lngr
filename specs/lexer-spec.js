@@ -1,8 +1,8 @@
-let expect = require('chai').expect;
-let fs = require('fs');
+const expect = require('chai').expect;
+const fs = require('fs');
 
-let lexer = require('./../src/lexer');
-let utils = require('./../src/utils');
+const lexer = require('./../src/lexer');
+const utils = require('./../src/utils');
 
 describe('Lexer', function() {
   describe('formats', function() {
@@ -55,7 +55,7 @@ describe('Lexer', function() {
     let tokens;
 
     before(function() {
-      let grammar = JSON.parse(fs.readFileSync('./sample_grammar.json', 'utf8'));
+      const grammar = JSON.parse(fs.readFileSync('./sample_grammar.json', 'utf8'));
       tokens = lexer.formatTokens(grammar.tokens);
     });
 

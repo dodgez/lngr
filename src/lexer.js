@@ -1,5 +1,5 @@
 module.exports.lex = function(tokens, stream) {
-  let tokenized = [];
+  const tokenized = [];
   let expr = "";
   let last_token = null;
 
@@ -8,7 +8,7 @@ module.exports.lex = function(tokens, stream) {
 
     let cur_token = null;
 
-    for (token of tokens) {
+    for (const token of tokens) {
       if (expr.match(token.expr)) {
         cur_token = token;
         break;
@@ -51,10 +51,10 @@ module.exports.lex = function(tokens, stream) {
 }
 
 module.exports.formatTokens = function(raw_tokens) {
-  let tokens = raw_tokens.map(token => Object.assign({}, token));
+  const tokens = raw_tokens.map(token => Object.assign({}, token));
 
-  for (token1 of tokens) {
-    for (token2 of tokens) {
+  for (const token1 of tokens) {
+    for (const token2 of tokens) {
       while (token1.expr.includes(token2.name)) token1.expr = token1.expr.replace(token2.name, token2.expr);
     }
   }

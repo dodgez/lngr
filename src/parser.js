@@ -1,7 +1,7 @@
-let utils = require('./utils');
+const utils = require('./utils');
 
 module.exports.parse = function(rules, stream, start_callback=()=>{}, end_callback=(node)=>{}) {
-  let parsed = rules[0].parse(stream, start_callback, end_callback);
+  const parsed = rules[0].parse(stream, start_callback, end_callback);
   
   if (!stream.isEOF()) {
     throw new Error(`Unexpected extra token '${stream.peekToken()}' line ${stream.peekLineInfo().line} col ${stream.peekLineInfo().col}`);
@@ -22,20 +22,20 @@ module.exports.formatRules = function(raw_rules) {
         let optional = expr.endsWith('?');
         let one_or_more = expr.endsWith('+');
         if (expr.endsWith('*')) optional = one_or_more = true;
-        let paranthesized = expr.includes('(') || expr.includes(')');
+        const paranthesized = expr.includes('(') || expr.includes(')');
         let option_passed = false;
 
         if (optional || one_or_more || paranthesized) expr = expr.replace(/(\(|\)|\?|\+|\*)/g, '');
 
-        for (let option of expr.split('|')) {
-          let is_token = option.match(/^[A-Z]/) ? true : false;
+        for (const option of expr.split('|')) {
+          const is_token = option.match(/^[A-Z]/) ? true : false;
 
           if (is_token) {
             if (stream.matchesToken(option)) {
               return true;
             }
           } else {
-            let matches = rules.filter(rule => rule.name == option)[0].matches(stream);
+            const matches = rules.filter(rule => rule.name == option)[0].matches(stream);
 
             if (matches) {
               return true;
@@ -54,25 +54,25 @@ module.exports.formatRules = function(raw_rules) {
     rule.parse = function(stream, start_callback, end_callback) {
       start_callback(rule.name);
       let children = [];
-      let returned_node = new utils.ASTNode(rule.name, children);
+      const returned_node = new utils.ASTNode(rule.name, children);
       for (let expr of rule.expr.split(' ')) {
         let optional = expr.endsWith('?');
         let one_or_more = expr.endsWith('+');
         if (expr.endsWith('*')) optional = one_or_more = true;
-        let paranthesized = expr.includes('(') || expr.includes(')');
+        const paranthesized = expr.includes('(') || expr.includes(')');
         let option_passed = false;
 
         if (optional || one_or_more || paranthesized) expr = expr.replace(/(\(|\)|\?|\+|\*)/g, '');
 
         let occurances = 0;
         do {
-          for (let option of expr.split('|')) {
-            let is_token = option.match(/^[A-Z]/) ? true : false;
+          for (const option of expr.split('|')) {
+            const is_token = option.match(/^[A-Z]/) ? true : false;
 
             if (is_token) {
               if (stream.matchesToken(option)) {
                 start_callback(option);
-                let node = new utils.ASTNode(option, [], stream.peekToken());
+                const node = new utils.ASTNode(option, [], stream.peekToken());
                 node.parent = returned_node;
                 end_callback(node);
                 children.push(node);
@@ -82,10 +82,10 @@ module.exports.formatRules = function(raw_rules) {
                 break;
               }
             } else {
-              let option_rule = rules.find(rule => rule.name == option);
+              const option_rule = rules.find(rule => rule.name == option);
               
               if (option_rule.matches(stream)) {
-                let node = option_rule.parse(stream, start_callback, end_callback);
+                const node = option_rule.parse(stream, start_callback, end_callback);
                 node.parent = returned_node;
                 if (!option_rule.squash) {
                   children.push(node);

@@ -1,12 +1,16 @@
-let expect = require('chai').expect;
+const chai = require('chai');
+const chaiExclude = require('chai-exclude');
 
-let parser = require('./../src/parser');
-let utils = require('./../src/utils');
+const parser = require('./../src/parser');
+const utils = require('./../src/utils');
+
+const expect = chai.expect;
+chai.use(chaiExclude);
 
 describe('Parser', function() {
   describe('formats', function() {
     it('formats one rule', function() {
-      let rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'}]);
+      const rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'}]);
 
       expect(rules[0]).to.have.property('name', 'expression');
       expect(rules[0]).to.have.property('expr', 'BINARY_OP INTEGER INTEGER');
@@ -14,7 +18,7 @@ describe('Parser', function() {
     });
 
     it('formats dependent rules', function() {
-      let rules = parser.formatRules([
+      const rules = parser.formatRules([
         {name: 'statement', expr: 'ASSIGNMENT IDENTIFIER expression'},
         {name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'}
       ]);
@@ -27,15 +31,15 @@ describe('Parser', function() {
 
   describe('matches', function() {
     it('a direct token', function() {
-      // let tokens = [{token: '+', type: 'BINARY_OP'}];
-      // let rules = parser.testFormatRules([{name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'}]);
+      // const tokens = [{token: '+', type: 'BINARY_OP'}];
+      // const rules = parser.testFormatRules([{name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'}]);
 
       // expect(rules[0].matches(utils.getTokenStream(tokens))).to.be.equal(true);
     });
 
     it('an indirect token', function() {
-      // let tokens = [{token: 'asdf', type: 'IDENTIFIER'}];
-      // let rules = parser.testFormatRules(
+      // const tokens = [{token: 'asdf', type: 'IDENTIFIER'}];
+      // const rules = parser.testFormatRules(
       //   [
       //     {name: 'statement', expr: 'type IDENTIFIER'},
       //     {name: 'type', expr: 'IDENTIFIER'},
@@ -48,38 +52,38 @@ describe('Parser', function() {
 
   describe('sample', function() {
     it('parses one rule', function() {
-      let tokens = [
+      const tokens = [
         {token: '+', type: 'BINARY_OP', line: 1, col: 1},
         {token: '1', type: 'INTEGER', line: 1, col: 1},
         {token: '1', type: 'INTEGER', line: 1, col: 1},
       ];
-      let node = new utils.ASTNode('expression', tokens.map(token => new utils.ASTNode(token.type, [], token.token)));
-      let rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'}]);
+      const node = new utils.ASTNode('expression', tokens.map(token => new utils.ASTNode(token.type, [], token.token)));
+      const rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'}]);
 
-      expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
+      expect(parser.parse(rules, utils.getTokenStream(tokens))).excludingEvery('parent').to.deep.equal(node);
     });
 
     it('parses an OR rule', function() {
-      let tokens = [
+      const tokens = [
         {token: '+', type: 'BINARY_OP', line: 1, col: 1},
         {token: 'a', type: 'IDENTIFIER', line: 1, col: 1},
         {token: '1', type: 'INTEGER', line: 1, col: 1}
       ];
-      let node = new utils.ASTNode('expression', tokens.map(token => new utils.ASTNode(token.type, [], token.token)));
-      let rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER|IDENTIFIER INTEGER'}]);
+      const node = new utils.ASTNode('expression', tokens.map(token => new utils.ASTNode(token.type, [], token.token)));
+      const rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER|IDENTIFIER INTEGER'}]);
 
-      expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
+      expect(parser.parse(rules, utils.getTokenStream(tokens))).excludingEvery('parent').to.deep.equal(node);
     });
 
     it('parses a recursive rule', function() {
-      let tokens = [
+      const tokens = [
         {token: '+', type: 'BINARY_OP', line: 1, col: 1},
         {token: '+', type: 'BINARY_OP', line: 1, col: 1},
         {token: '1', type: 'INTEGER', line: 1, col: 1},
         {token: '1', type: 'INTEGER', line: 2, col: 1},
         {token: 'a', type: 'IDENTIFIER', line: 2, col: 1}
       ];
-      let node = new utils.ASTNode('expression', [
+      const node = new utils.ASTNode('expression', [
         new utils.ASTNode('BINARY_OP', [], '+'),
         new utils.ASTNode('expression', [
           new utils.ASTNode('BINARY_OP', [], '+'),
@@ -88,13 +92,13 @@ describe('Parser', function() {
         ]),
         new utils.ASTNode('IDENTIFIER', [], 'a')
       ]);
-      let rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER|IDENTIFIER|expression INTEGER|IDENTIFIER|expression'}]);
+      const rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER|IDENTIFIER|expression INTEGER|IDENTIFIER|expression'}]);
 
-      expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
+      expect(parser.parse(rules, utils.getTokenStream(tokens))).excludingEvery('parent').to.deep.equal(node);
     });
 
     it('parses a deeper recursive rule', function() {
-      let tokens = [
+      const tokens = [
         {token: '+', type: 'BINARY_OP', line: 1, col: 1},
         {token: '+', type: 'BINARY_OP', line: 1, col: 1},
         {token: '1', type: 'INTEGER', line: 1, col: 1},
@@ -103,7 +107,7 @@ describe('Parser', function() {
         {token: 'a', type: 'IDENTIFIER', line: 1, col: 1},
         {token: '1', type: 'INTEGER', line: 1, col: 1}
       ];
-      let node = new utils.ASTNode('expression', [
+      const node = new utils.ASTNode('expression', [
         new utils.ASTNode('BINARY_OP', [], '+'),
         new utils.ASTNode('expression', [
           new utils.ASTNode('BINARY_OP', [], '+'),
@@ -116,20 +120,20 @@ describe('Parser', function() {
           new utils.ASTNode('INTEGER', [], '1')
         ])
       ]);
-      let rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER|IDENTIFIER|expression INTEGER|IDENTIFIER|expression'}]);
+      const rules = parser.formatRules([{name: 'expression', expr: 'BINARY_OP INTEGER|IDENTIFIER|expression INTEGER|IDENTIFIER|expression'}]);
 
-      expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
+      expect(parser.parse(rules, utils.getTokenStream(tokens))).excludingEvery('parent').to.deep.equal(node);
     });
 
     it('parses dependent rules', function() {
-      let tokens = [
+      const tokens = [
         {token: '=', type: 'ASSIGNMENT', line: 1, col: 1},
         {token: 'a', type: 'IDENTIFIER', line: 1, col: 1},
         {token: '+', type: 'BINARY_OP', line: 1, col: 1},
         {token: '1', type: 'INTEGER', line: 1, col: 1},
         {token: '1', type: 'INTEGER', line: 1, col: 1}
       ];
-      let node = new utils.ASTNode('statement', [
+      const node = new utils.ASTNode('statement', [
         new utils.ASTNode('ASSIGNMENT', [], '='),
         new utils.ASTNode('IDENTIFIER', [], 'a'),
         new utils.ASTNode('expression', [
@@ -138,12 +142,12 @@ describe('Parser', function() {
           new utils.ASTNode('INTEGER', [], '1')
         ])
       ]);
-      let rules = parser.formatRules([
+      const rules = parser.formatRules([
         {name: 'statement', expr: 'ASSIGNMENT IDENTIFIER expression'},
         {name: 'expression', expr: 'BINARY_OP INTEGER INTEGER'}
       ]);
 
-      expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
+      expect(parser.parse(rules, utils.getTokenStream(tokens))).excludingEvery('parent').to.deep.equal(node);
     });
 
     it('parses rules with optional arguments', function() {
@@ -155,11 +159,11 @@ describe('Parser', function() {
         new utils.ASTNode('OPERATOR', [], '+'),
         new utils.ASTNode('IDENTIFIER', [], 'a')
       ]);
-      let rules = parser.formatRules([
+      const rules = parser.formatRules([
         {name: 'expression', expr: 'OPERATOR INTEGER|IDENTIFIER (INTEGER|IDENTIFIER)?'}
       ]);
 
-      expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
+      expect(parser.parse(rules, utils.getTokenStream(tokens))).excludingEvery('parent').to.deep.equal(node);
 
       tokens = [
         {token: '+', type: 'OPERATOR', line: 1, col: 1},
@@ -172,14 +176,14 @@ describe('Parser', function() {
         new utils.ASTNode('IDENTIFIER', [], 'a')
       ]);
 
-      expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
+      expect(parser.parse(rules, utils.getTokenStream(tokens))).excludingEvery('parent').to.deep.equal(node);
     });
 
     it('parses rules with one-or-more type arguments', function() {
       let tokens = [
         {token: 'print', type: 'PRINT', line: 1, col: 1}
       ];
-      let rules = parser.formatRules([
+      const rules = parser.formatRules([
         {name: 'print', expr: 'PRINT (INTEGER|IDENTIFIER)+'}
       ]);
 
@@ -194,7 +198,7 @@ describe('Parser', function() {
         new utils.ASTNode('INTEGER', [], '1')
       ]);
 
-      expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
+      expect(parser.parse(rules, utils.getTokenStream(tokens))).excludingEvery('parent').to.deep.equal(node);
 
       tokens = [
         {token: 'print', type: 'PRINT', line: 1, col: 1},
@@ -207,7 +211,7 @@ describe('Parser', function() {
         new utils.ASTNode('IDENTIFIER', [], 'a')
       ]);
 
-      expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
+      expect(parser.parse(rules, utils.getTokenStream(tokens))).excludingEvery('parent').to.deep.equal(node);
     });
 
     it('parses rules with zero-or-more type arguments', function() {
@@ -219,11 +223,11 @@ describe('Parser', function() {
         new utils.ASTNode('LPAREN', [], '('),
         new utils.ASTNode('RPAREN', [], ')')
       ]);
-      let rules = parser.formatRules([
+      const rules = parser.formatRules([
         {name: 'call', expr: 'LPAREN (INTEGER)* RPAREN'}
       ]);
 
-      expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
+      expect(parser.parse(rules, utils.getTokenStream(tokens))).excludingEvery('parent').to.deep.equal(node);
 
       tokens = [
         {token: '(', type: 'LPAREN', line: 1, col: 1},
@@ -236,7 +240,7 @@ describe('Parser', function() {
         new utils.ASTNode('RPAREN', [], ')')
       ]);
 
-      expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
+      expect(parser.parse(rules, utils.getTokenStream(tokens))).excludingEvery('parent').to.deep.equal(node);
 
       tokens = [
         {token: '(', type: 'LPAREN', line: 1, col: 1},
@@ -251,15 +255,15 @@ describe('Parser', function() {
         new utils.ASTNode('RPAREN', [], ')')
       ]);
 
-      expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
+      expect(parser.parse(rules, utils.getTokenStream(tokens))).excludingEvery('parent').to.deep.equal(node);
     });
 
     it('throws an error for extra tokens', function() {
-      let tokens = [
+      const tokens = [
         {token: '1', type: 'INTEGER', line: 2, col: 1},
         {token: 'test', type: 'ID', line: 3, col: 4}
       ];
-      let rules = parser.formatRules([
+      const rules = parser.formatRules([
         {name: 'program', expr: 'INTEGER+'}
       ]);
 
@@ -267,11 +271,11 @@ describe('Parser', function() {
     });
 
     it('squashes unnecessary nested tokens', function() {
-      let tokens = [
+      const tokens = [
         {token: 'test', type: 'IDENTIFIER', line: 1, col: 1},
         {token: 'case', type: 'IDENTIFIER', line: 1, col: 5}
       ];
-      let rules = parser.formatRules([
+      const rules = parser.formatRules([
         {name: 'tree', expr: "unnecessary"},
         {name: 'unnecessary', expr: "(IDENTIFIER)*", squash: true}
       ]);
@@ -280,26 +284,26 @@ describe('Parser', function() {
         new utils.ASTNode('IDENTIFIER', [], 'test'),
         new utils.ASTNode('IDENTIFIER', [], 'case')
       ]);
-      expect(parser.parse(rules, utils.getTokenStream(tokens))).to.deep.equal(node);
+      expect(parser.parse(rules, utils.getTokenStream(tokens))).excludingEvery('parent').to.deep.equal(node);
     });
 
     it('calls a start callback', function() {
-      let nodes_reached = [];
-      let tokens = [{token: 'test', type: 'IDENTIFIER', line: 1, col: 1}];
-      let rules = parser.formatRules([{name: 'program', expr: 'IDENTIFIER'}]);
+      const nodes_reached = [];
+      const tokens = [{token: 'test', type: 'IDENTIFIER', line: 1, col: 1}];
+      const rules = parser.formatRules([{name: 'program', expr: 'IDENTIFIER'}]);
 
       parser.parse(rules, utils.getTokenStream(tokens), function(type) {
         nodes_reached.push(type);
       });
 
-      expect(nodes_reached).to.deep.equal(['program', 'IDENTIFIER']);
+      expect(nodes_reached).excludingEvery('parent').to.deep.equal(['program', 'IDENTIFIER']);
     });
 
     it('calls an end callback', function() {
-      let nodes_reached = [];
-      let tokens = [{token: 'test', type: 'IDENTIFIER', line: 1, col: 1}];
-      let rules = parser.formatRules([{name: 'program', expr: 'IDENTIFIER'}]);
-      let nodes = [
+      const nodes_reached = [];
+      const tokens = [{token: 'test', type: 'IDENTIFIER', line: 1, col: 1}];
+      const rules = parser.formatRules([{name: 'program', expr: 'IDENTIFIER'}]);
+      const nodes = [
         new utils.ASTNode('IDENTIFIER', [], 'test'),
         new utils.ASTNode('program', [new utils.ASTNode('IDENTIFIER', [], 'test')])
       ];
@@ -308,7 +312,7 @@ describe('Parser', function() {
         nodes_reached.push(node);
       });
 
-      expect(nodes_reached).to.deep.equal(nodes);
+      expect(nodes_reached).excludingEvery('parent').to.deep.equal(nodes);
     });
   });
 });
